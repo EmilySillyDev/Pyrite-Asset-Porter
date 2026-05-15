@@ -5,3 +5,11 @@ bp = Blueprint('main', __name__)
 @bp.route('/')
 def index():
     return render_template('index.html.j2')
+
+@bp.route('/settings')
+def settings():
+    return render_template('settings.html.j2')
+
+@bp.route('/debug')
+def debug():
+    return render_template('debug.html.j2')

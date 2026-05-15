@@ -1,0 +1,11 @@
+{%- macro outlined_button(text, id=None, classes="", onclick=None) -%}
+    <button class="outlined-button {{ classes }}" {% if id %}id="{{ id }}"{% endif %} {% if onclick %}onclick="{{ onclick }}"{% endif %}>{{ text }}</button>
+{%- endmacro -%}
+
+{%- macro contained_button(text, id=None, classes="", onclick=None) -%}
+    <button class="contained-button {{ classes }}" {% if id %}id="{{ id }}"{% endif %} {% if onclick %}onclick="{{ onclick }}"{% endif %}>{{ text }}</button>
+{%- endmacro -%}
+
+{%- macro text_button(text, id=None, classes="", onclick=None) -%}
+    <button class="text-button {{ classes }}" {% if id %}id="{{ id }}"{% endif %} {% if onclick %}onclick="{{ onclick }}"{% endif %}>{{ text }}</button>
+{%- endmacro -%}

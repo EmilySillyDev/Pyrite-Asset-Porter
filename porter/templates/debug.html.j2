@@ -1,0 +1,23 @@
+{%- extends "template.html.j2" -%}
+
+{%- import "elements/buttons.html.j2" as buttons -%}
+
+{%- block head -%}
+    {{super()}}
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/debug.css') }}">
+{%- endblock -%}
+
+{%- block content -%}
+    <div class="container">
+        <h1>Debug</h1>
+        <h2>Button Examples</h2>
+
+        <div class="button-div">
+            {{- buttons.outlined_button("Outlined Button", id="outlined-button", onclick="alert('Outlined button clicked!')") -}}
+            {{- buttons.contained_button("Contained Button", id="contained-button", onclick="alert('Contained button clicked!')") -}}
+            {{- buttons.text_button("Text Button", id="text-button", onclick="alert('Text button clicked!')") -}}
+        </div>
+
+
+    </div>
+{%- endblock -%}

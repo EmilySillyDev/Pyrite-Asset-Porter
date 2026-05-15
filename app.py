@@ -1,3 +1,5 @@
+import os
+
 import webview
 import threading
 import sys
@@ -10,7 +12,7 @@ def start_flask():
 
 def start_webview():
     # Create a webview window
-    webview.create_window('Porter', 'http://127.0.0.1:5000', width=800, height=600)
+    webview.create_window('Porter', 'http://127.0.0.1:5000', width=1280, height=720)
     webview.start()
 
 def main(headless=False):
