@@ -18,6 +18,83 @@
             {{- buttons.text_button("Text Button", id="text-button", onclick="alert('Text button clicked!')") -}}
         </div>
 
+        <h2>Authentication Status</h2>
+        <div>
+            <p>Authenticated: {{ config['USER'].is_authenticated() }}</p>
+            <p>Current API Key: {{ config['USER'].current_api_key or 'Not set' }}</p>
+            <p>Target Group: {{ config['USER'].target_group or 'Not set' }}</p>
+            <p>Stored Groups: {{ config['USER'].get_groups() or 'None' }}</p>
+        </div>
+
+        <h2>Groups</h2>
+        <div>
+            <p>Add Group</p>
+            <input type="text" id="new-group-name" placeholder="Group Name">
+            <input type="text" id="new-group-api-key" placeholder="Group ID">
+            {{- buttons.contained_button("Add Group", id="add-group-button", onclick="addGroup()") -}}
+
+            <p>Set Target Group</p>
+            <input type="text" id="target-group" placeholder="Target Group">
+            {{- buttons.contained_button("Set Target Group", id="set-target-group-button", onclick="setTargetGroup()") -}}
+        </div>
 
     </div>
+
+    <script>
+        function addGroup() {
+            const groupName = document.getElementById('new-group-name').value;
+            const groupId = document.getElementById('new-group-api-key').value;
+            if (!groupName || !groupId) {
+                alert('Please enter both a group name and ID.');
+                return;
+            }
+
+            console.log(`Adding group with name: ${groupName} and ID: ${groupId}`);
+
+            fetch('/add-group', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ group_name: groupName, group_id: groupId })
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Group added successfully!');
+                    location.reload();
+                } else {
+                    alert('Failed to add group.');
+                }
+            })
+            .catch(error => {
+                console.error('Error adding group:', error);
+                alert('An error occurred while adding the group.');
+            });
+        }
+
+        function setTargetGroup() {
+            const targetGroup = document.getElementById('target-group').value;
+            console.log(`Setting target group: ${targetGroup}`);
+
+            fetch('/set-target-group', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ target_group: targetGroup })
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Target group set successfully!');
+                    location.reload();
+                } else {
+                    alert('Failed to set target group.');
+                }
+            })
+            .catch(error => {
+                console.error('Error setting target group:', error);
+                alert('An error occurred while setting the target group.');
+            });
+        }
+    </script>
 {%- endblock -%}

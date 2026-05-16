@@ -1,6 +1,20 @@
 {%- block navbar -%}
     <nav class="navbar">
         <div class="navbar-left">
+            <!-- Little LED-esque icon with 'AUTHORISED' after it, used for login -->
+            <!-- Red icon for unauthenticated, green for authenticated -->
+            <div class="auth-status">
+                <div class="auth-icon {{ 'auth-green' if config['USER'].is_authenticated() else 'auth-red' }}"></div>
+                <span class="auth-text">AUTH STATUS</span>
+            </div>
+
+            <div class="dot-seperator"></div>
+
+            <div class="user-info">
+                <span class="user-group">
+                    Group: {{ config['USER'].target_group or 'None' }}
+                </span>
+            </div>
         </div>
 
         <div class="navbar-right">
@@ -8,10 +22,15 @@
                 <img src="{{ url_for('static', filename='icons/home.svg') }}" alt="Home" class="navbar-icon svg-white">
             </a>
 
-            <a class="navbar-link" id="settings-link" href="{{ url_for('main.settings') }}">
+            <a class="navbar-link" id="settings-link" href="{{ url_for('settings.settings') }}">
                 <img src="{{ url_for('static', filename='icons/cog.svg') }}" alt="Settings" class="navbar-icon svg-white">
             </a>
-            
+
+            {%- if config['DEBUG'] -%}
+                <a class="navbar-link" id="debug-link" href="{{ url_for('main.debug') }}">
+                    <img src="{{ url_for('static', filename='icons/bug.svg') }}" alt="Debug" class="navbar-icon svg-white">
+                </a>
+            {%- endif -%}
         </div>
     </nav>
 {%- endblock -%}

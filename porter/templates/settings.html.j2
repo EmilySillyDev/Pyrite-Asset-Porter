@@ -6,5 +6,26 @@
     <div class="container">
         <h1>Settings</h1>
 
+        {{- buttons.contained_button("Save Settings", id="save-settings-button", onclick="saveSettings()") -}}
+
     </div>
+
+    <script>
+        function saveSettings() {
+            fetch('/save-settings', {
+                method: 'POST'
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Settings saved successfully!');
+                } else {
+                    alert('Failed to save settings.');
+                }
+            })
+            .catch(error => {
+                console.error('Error saving settings:', error);
+                alert('An error occurred while saving settings.');
+            });
+        }
+    </script>
 {%- endblock -%}

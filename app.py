@@ -6,28 +6,34 @@ import sys
 
 import porter
 
-def start_flask():
+def start_flask(debug=False):
     app = porter.create_app()
-    app.run(debug=True, use_reloader=False, port=5000)
+    app.run(debug=debug, use_reloader=False, port=5000)
 
-def start_webview():
-    # Create a webview window
-    webview.create_window('Porter', 'http://127.0.0.1:5000', width=1280, height=720)
+def start_webview(debug=False):
+    link = 'http://127.0.0.1:5000'
+    if debug:
+        link += '/debug'
+
+    webview.create_window('Porter', link, width=1280, height=720)
     webview.start()
 
-def main(headless=False):
+def main(headless=False, debug=False):
     if headless:
         # Start the Flask app in the main thread
-        start_flask()
+        start_flask(debug=debug)
         return
     
     # Start the Flask app in a separate thread
-    flask_thread = threading.Thread(target=start_flask)
+    flask_thread = threading.Thread(target=start_flask, kwargs={'debug': debug})
     flask_thread.daemon = True
     flask_thread.start()
 
     # Start the webview in the main thread
-    start_webview()
+    start_webview(debug=debug)
 
 if __name__ == '__main__':
-    main(headless='--headless' in sys.argv)
+    main(
+        headless='--headless' in sys.argv,
+        debug='--debug' in sys.argv
+    )
