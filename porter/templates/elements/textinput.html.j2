@@ -1,19 +1,27 @@
 {%- import "elements/buttons.html.j2" as buttons -%}
 
-{%- macro text_input(label, id, placeholder) -%}
+{%- macro text_input(label, id, placeholder, default_value="", onclick=None) -%}
     <div class="form-group">
         <label for="{{ id }}">{{ label }}</label>
-        <input type="text" id="{{ id }}" name="{{ id }}" placeholder="{{ placeholder }}" class="form-control">
+
+        <div class="input-group">
+            <input type="text" id="{{ id }}" name="{{ id }}" placeholder="{{ placeholder }}" class="form-control" value="{{ default_value }}">
+            {%- if onclick -%}
+                {{- buttons.contained_button("Save", id="save-{{ id }}", onclick=onclick) -}}
+            {%- endif -%}
+        </div>
     </div>
 {%- endmacro -%}
 
-{%- macro password_input(label, id, placeholder, onclick=None) -%}
+{%- macro password_input(label, id, placeholder, default_value="", onclick=None) -%}
     <div class="form-group">
         <label for="{{ id }}">{{ label }}</label>
         
         <div class="input-group">
-            <input type="password" id="{{ id }}" name="{{ id }}" placeholder="{{ placeholder }}" class="form-control">
-            {{- buttons.contained_button("Save", id="save-{{ id }}", onclick=onclick) -}}
+            <input type="password" id="{{ id }}" name="{{ id }}" placeholder="{{ placeholder }}" class="form-control" value="{{ default_value }}">
+            {%- if onclick -%}
+                {{- buttons.contained_button("Save", id="save-{{ id }}", onclick=onclick) -}}
+            {%- endif -%}
         </div>
 
     </div>

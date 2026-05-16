@@ -16,7 +16,9 @@
         <h2>API Settings</h2>
 
         <div class="settings">
-            {{- text_input.password_input("API Key", "api-key", "Enter your API key here", onclick="saveAPIKey()" ) -}}
+            {{- text_input.text_input("User ID", "user-id", "Enter your user ID here", default_value=config['USER'].get_user_id() or "") -}}
+            {{- text_input.password_input("API Key", "api-key", "Enter your API key here", default_value=config['USER'].current_api_key or "") -}}
+            {{- buttons.contained_button("Save Login", onclick="saveLoginInfo()", classes="group-button" ) -}}
         </div>
 
         <h2>Group Settings</h2>
@@ -34,29 +36,31 @@
     </div>
 
     <script>
-        function saveAPIKey() {
+        function saveLoginInfo() {
+            const userId = document.getElementById('user-id').value;
             const apiKey = document.getElementById('api-key').value;
 
-            fetch('/settings/set-api-key', {
+            console.log(`Saving login info with user ID: ${userId}`);
+
+            fetch('/settings/save-login', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Content-Type': 'application/json'
                 },
-                body: `api_key=${encodeURIComponent(apiKey)}`,
+                body: JSON.stringify({ user_id: userId, api_key: apiKey })
             })
             .then(response => {
                 if (response.ok) {
                     location.reload();
                 } else {
-                    alert('Failed to save API key.');
+                    alert('Failed to save login information. Please check your API key and try again.');
                 }
             })
             .catch(error => {
-                console.error('Error saving API key:', error);
-                alert('An error occurred while saving the API key.');
+                console.error('Error saving login information:', error);
+                alert('An error occurred while saving login information. Please try again later.');
             });
         }
-
         function addGroup() {
             const groupName = document.getElementById('new-group-name').value;
             const groupId = document.getElementById('new-group-id').value;

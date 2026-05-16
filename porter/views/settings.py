@@ -11,6 +11,24 @@ def save_settings():
     current_app.config['USER'].save()
     return "Settings saved successfully", 200
 
+@bp.route('/settings/save-login', methods=['POST'])
+def save_login():
+    data = request.get_json(silent=True)
+    if data:
+        user_id = data.get('user_id')
+        api_key = data.get('api_key')
+    else:
+        user_id = request.form.get('user_id')
+        api_key = request.form.get('api_key')
+
+    if user_id:
+        current_app.config['USER'].set_user_id(user_id)
+    if api_key:
+        current_app.config['USER'].set_api_key(api_key)
+
+    current_app.config['USER'].save()
+    return "Login information saved successfully", 200
+
 @bp.route('/settings/set-api-key', methods=['POST'])
 def set_api_key():
     data = request.get_json(silent=True)

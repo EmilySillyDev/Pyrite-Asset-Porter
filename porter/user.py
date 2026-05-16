@@ -11,8 +11,11 @@ import configparser
 import json
 import os
 
+import requests
+
 from appdata import AppDataPaths
 from rblxopencloud import ApiKey
+from rblxopencloud import User as RobloxUser
 
 class User:
     def __init__(self):
@@ -22,11 +25,32 @@ class User:
         self.paths = app_paths
 
         self.current_api_key = None
+        self.user_id = None
         self.target_group = None
+
+        self.user = None
         self.groups = []
 
         self.load_data()
     
+    def get_asset_delivery_info(self, asset_id):
+        if not self.is_authenticated():
+            raise Exception("User is not authenticated")
+        
+        # https://apis.roblox.com/asset-delivery-api/v1/assetId/{assetId}
+        link = f"https://apis.roblox.com/asset-delivery-api/v1/assetId/{asset_id}"
+        headers = {
+            "x-api-key": f"{self.current_api_key}"
+        }
+        
+        request = requests.get(link, headers=headers)
+
+        if request.status_code == 200:
+            return request.json()
+        else:
+            raise Exception(f"Failed to fetch asset delivery info: {request.status_code} - {request.text}")
+
+
     def load_data(self):
         config_file = self.paths.config_path
 
@@ -36,7 +60,6 @@ class User:
 
             selected_key = config.get('API', 'current_api_key', fallback=None)
             self.current_api_key = selected_key
-            self.apiKeyObject = ApiKey(selected_key) if selected_key else None
 
             self.target_group = config.get('GROUP', 'target_group', fallback=None)
 
@@ -46,20 +69,38 @@ class User:
             if self.target_group is not None:
                 self.target_group = int(self.target_group)
 
+            self.user_id = config.get('API', 'user_id', fallback=None)
+
+            if self.user_id == "":
+                self.user_id = None
+
+            if self.user_id is not None:
+                self.user_id = int(self.user_id)
+
+            if (self.current_api_key is not None) and (self.user_id is not None):
+                try:
+                    self.user = RobloxUser(self.user_id, self.current_api_key)
+                except Exception as e:
+                    print(f"Failed to validate API key: {e}")
+                    self.current_api_key = None
+
         self.groups = self.load_groups()
 
-    def get_asset(self, asset_id):
-        if not self.is_authenticated():
-            raise Exception("User is not authenticated")
-        
-        return self.apiKeyObject.fetch_asset(asset_id)
+
+    def get_user_id(self):
+        return self.user_id if hasattr(self, 'user_id') else None
+    
+    def set_user_id(self, user_id):
+        self.user_id = user_id
+        self.setup_user()
+        self.save()
     
     def get_asset_download(self, asset_id):
-        if not self.is_authenticated():
-            raise Exception("User is not authenticated")
-        
-        asset = self.apiKeyObject.fetch_asset(asset_id)
-        return asset.download()
+        info = self.get_asset_delivery_info(asset_id)
+        if 'location' in info:
+            return info['location']
+        else:
+            raise Exception("Asset delivery info does not contain a download location")
 
     def save(self):
         data_path = self.paths.app_data_path
@@ -73,6 +114,9 @@ class User:
         config['API'] = {}
         if self.current_api_key is not None:
             config['API']['current_api_key'] = self.current_api_key
+
+        if self.user_id is not None:
+            config['API']['user_id'] = str(self.user_id)
 
         config['GROUP'] = {}
         if self.target_group is not None:
@@ -139,9 +183,18 @@ class User:
     
     def set_api_key(self, api_key):
         self.current_api_key = api_key
-        self.apiKeyObject = ApiKey(api_key)
+        self.setup_user()
         self.save()
 
+    def setup_user(self):
+        if (self.current_api_key is not None) and (self.user_id is not None):
+            try:
+                self.user = RobloxUser(self.user_id, self.current_api_key)
+            except Exception as e:
+                print(f"Failed to validate API key: {e}")
+                self.current_api_key = None
+                self.user = None
+
     def is_authenticated(self):
-        return self.current_api_key is not None
+        return self.user is not None
     

@@ -40,6 +40,13 @@
             {{- buttons.contained_button("Set Target Group", id="set-target-group-button", onclick="setTargetGroup()") -}}
         </div>
 
+        <h2>Asset Download Test</h2>
+        <div>
+            <p>Enter an asset ID to test downloading:</p>
+            <input type="text" id="asset-id-input" placeholder="Asset ID">
+            {{- buttons.contained_button("Download Asset", id="download-asset-button", onclick="downloadAsset()") -}}
+        </div>
+
     </div>
 
     <script>
@@ -97,6 +104,38 @@
                 console.error('Error setting target group:', error);
                 alert('An error occurred while setting the target group.');
             });
+        }
+
+        function downloadAsset() {
+            const assetId = document.getElementById('asset-id-input').value;
+            if (!assetId) {
+                alert('Please enter an asset ID.');
+                return;
+            }
+
+            console.log(`Downloading asset with ID: ${assetId}`);
+
+            fetch(`/assets/download-asset/${assetId}`)
+                .then(response => {
+                    if (response.ok) {
+                        return response.blob();
+                    } else {
+                        throw new Error(`Failed to download asset: ${response.status} - ${response.statusText}`);
+                    }
+                })
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `asset_${assetId}`;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                })
+                .catch(error => {
+                    console.error('Error downloading asset:', error);
+                    alert(`An error occurred while downloading the asset: ${error.message}`);
+                });
         }
     </script>
 {%- endblock -%}
