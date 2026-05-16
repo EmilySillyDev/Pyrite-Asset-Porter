@@ -34,20 +34,102 @@
     </div>
 
     <script>
-        function saveSettings() {
-            fetch('/save-settings', {
-                method: 'POST'
+        function saveAPIKey() {
+            const apiKey = document.getElementById('api-key').value;
+
+            fetch('/settings/set-api-key', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `api_key=${encodeURIComponent(apiKey)}`,
             })
             .then(response => {
                 if (response.ok) {
-                    alert('Settings saved successfully!');
+                    location.reload();
                 } else {
-                    alert('Failed to save settings.');
+                    alert('Failed to save API key.');
                 }
             })
             .catch(error => {
-                console.error('Error saving settings:', error);
-                alert('An error occurred while saving settings.');
+                console.error('Error saving API key:', error);
+                alert('An error occurred while saving the API key.');
+            });
+        }
+
+        function addGroup() {
+            const groupName = document.getElementById('new-group-name').value;
+            const groupId = document.getElementById('new-group-id').value;
+            if (!groupName || !groupId) {
+                alert('Please enter both a group name and ID.');
+                return;
+            }
+
+            console.log(`Adding group with name: ${groupName} and ID: ${groupId}`);
+
+            fetch('/settings/add-group', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ group_name: groupName, group_id: groupId })
+            })
+            .then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Failed to add group.');
+                }
+            })
+            .catch(error => {
+                console.error('Error adding group:', error);
+                alert('An error occurred while adding the group.');
+            });
+        }
+
+        function setTargetGroup(groupId) {
+            console.log(`Setting target group: ${groupId}`);
+
+            fetch('/settings/set-target-group', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ target_group: groupId })
+            })
+            .then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Failed to set target group.');
+                }
+            })
+            .catch(error => {
+                console.error('Error setting target group:', error);
+                alert('An error occurred while setting the target group.');
+            });
+        }
+
+        function removeGroup(groupId) {
+            console.log(`Removing group: ${groupId}`);
+
+            fetch('/settings/remove-group', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ group_id: groupId })
+            })
+            .then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Failed to remove group.');
+                }
+            })
+            .catch(error => {
+                console.error('Error removing group:', error);
+                alert('An error occurred while removing the group.');
             });
         }
     </script>

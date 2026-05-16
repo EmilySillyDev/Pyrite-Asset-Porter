@@ -53,7 +53,7 @@
 
             console.log(`Adding group with name: ${groupName} and ID: ${groupId}`);
 
-            fetch('/add-group', {
+            fetch('/settings/add-group', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -78,7 +78,7 @@
             const targetGroup = document.getElementById('target-group').value;
             console.log(`Setting target group: ${targetGroup}`);
 
-            fetch('/set-target-group', {
+            fetch('/settings/set-target-group', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

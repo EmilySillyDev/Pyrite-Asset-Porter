@@ -1,5 +1,6 @@
 import os
 
+import appdata
 import webview
 import threading
 import sys
@@ -18,7 +19,20 @@ def start_webview(debug=False):
     webview.create_window('Porter', link, width=1280, height=720)
     webview.start()
 
-def main(headless=False, debug=False):
+def main(headless=False, debug=False, reset=False):
+    if reset:
+        app_paths = appdata.AppDataPaths("Pyrite Asset Porter")
+        app_paths.setup()
+
+        # Remove config file
+        if os.path.exists(app_paths.config_path):
+            os.remove(app_paths.config_path)
+
+        # Remove groups file
+        groups_file = os.path.join(app_paths.app_data_path, 'groups.json')
+        if os.path.exists(groups_file):
+            os.remove(groups_file)
+
     if headless:
         # Start the Flask app in the main thread
         start_flask(debug=debug)
@@ -35,5 +49,6 @@ def main(headless=False, debug=False):
 if __name__ == '__main__':
     main(
         headless='--headless' in sys.argv,
-        debug='--debug' in sys.argv
+        debug='--debug' in sys.argv,
+        reset='--reset' in sys.argv
     )
