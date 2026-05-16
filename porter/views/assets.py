@@ -6,7 +6,7 @@ bp = Blueprint('assets', __name__)
 def get_asset(asset_id):
     try:
         asset = current_app.config['USER'].get_asset(asset_id)
-        return asset
+        return asset.name, 200
     except Exception as e:
         return str(e), 400
 
