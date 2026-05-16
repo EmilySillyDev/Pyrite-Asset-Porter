@@ -1,0 +1,25 @@
+{%- import "elements/buttons.html.j2" as buttons -%}
+
+{%- macro list(items) -%}
+    <ul class="list">
+    {%- for item in items -%}
+        <li class="list-item">{{ item }}</li>
+    {%- endfor -%}
+    </ul>
+{%- endmacro -%}
+
+{%- macro group_list(groups) -%}
+    <ul class="list">
+    {%- for group in groups -%}
+        <li class="list-item">
+            <p>{{ group.name }}</p>
+            <p class="list-item-id">{{ group.id }}</p>
+            <div class="list-item-actions">
+                <p class="list-item-id">ID: {{ group.id }} </p>
+                {{- buttons.small_text_button("Set Target", id="set-target-{{ group.id }}", onclick="setTargetGroup('{{ group.id }}')") -}}
+                {{- buttons.small_text_button("Remove", id="remove-group-{{ group.id }}", onclick="removeGroup('{{ group.id }}')") -}}
+            </div> 
+        </li>
+    {%- endfor -%}
+    </ul>
+{%- endmacro -%}

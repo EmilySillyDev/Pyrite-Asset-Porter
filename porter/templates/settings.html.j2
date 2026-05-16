@@ -1,13 +1,36 @@
 {%- extends "template.html.j2" -%}
 
 {%- import "elements/buttons.html.j2" as buttons -%}
+{%- import "elements/textinput.html.j2" as text_input -%}
+{%- import "elements/listing.html.j2" as listing -%}
+
+{%- block head -%}
+    {{super()}}
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/settings.css') }}">
+{%- endblock -%}
 
 {%- block content -%}
     <div class="container">
         <h1>Settings</h1>
+        <p>Manage your API key, groups, and other settings here.</p>
+        <h2>API Settings</h2>
 
-        {{- buttons.contained_button("Save Settings", id="save-settings-button", onclick="saveSettings()") -}}
+        <div class="settings">
+            {{- text_input.password_input("API Key", "api-key", "Enter your API key here", onclick="saveAPIKey()" ) -}}
+        </div>
 
+        <h2>Group Settings</h2>
+        <div class="settings">
+            {{- listing.group_list(config['USER'].get_groups() or []) -}}
+            <div class="line-seperator"></div>
+            <div class="current-target">
+                <p>Target Group</p>
+                <p>{{ config['USER'].get_target_group_name() or "None" }}</p>
+            </div>
+            {{- text_input.text_input("New Group Name", "new-group-name", "Enter new group name") -}}
+            {{- text_input.text_input("New Group ID", "new-group-id", "Enter new group ID") -}}
+            {{- buttons.contained_button("Add Group", id="add-group-button", onclick="addGroup()", classes="group-button" ) -}}
+        </div>
     </div>
 
     <script>

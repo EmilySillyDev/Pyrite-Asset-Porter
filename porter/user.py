@@ -85,11 +85,21 @@ class User:
             self.save()
             return
 
-        if not any(group['name'] == target_group for group in self.groups):
+        if not any(group['id'] == target_group for group in self.groups):
             raise ValueError(f"Group '{target_group}' does not exist")
 
         self.target_group = target_group
         self.save()
+
+    def get_target_group_name(self):
+        if self.target_group is None:
+            return None
+
+        for group in self.groups:
+            if group['id'] == self.target_group:
+                return group['name']
+        
+        return None
 
     def is_authenticated(self):
         return self.current_api_key is not None

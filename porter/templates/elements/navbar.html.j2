@@ -12,7 +12,7 @@
 
             <div class="user-info">
                 <span class="user-group">
-                    Group: {{ config['USER'].target_group or 'None' }}
+                    Group: {{ config['USER'].get_target_group_name() or 'None' }}
                 </span>
             </div>
         </div>

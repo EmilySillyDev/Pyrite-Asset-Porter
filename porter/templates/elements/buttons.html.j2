@@ -9,3 +9,7 @@
 {%- macro text_button(text, id=None, classes="", onclick=None) -%}
     <button class="text-button {{ classes }}" {% if id %}id="{{ id }}"{% endif %} {% if onclick %}onclick="{{ onclick }}"{% endif %}>{{ text }}</button>
 {%- endmacro -%}
+
+{%- macro small_text_button(text, id=None, classes="", onclick=None) -%}
+    <button class="small-text-button {{ classes }}" {% if id %}id="{{ id }}"{% endif %} {% if onclick %}onclick="{{ onclick }}"{% endif %}>{{ text }}</button>
+{%- endmacro -%}
