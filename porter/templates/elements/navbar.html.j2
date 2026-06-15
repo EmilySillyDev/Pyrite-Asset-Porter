@@ -22,6 +22,10 @@
                 <img src="{{ url_for('static', filename='icons/home.svg') }}" alt="Home" class="navbar-icon svg-white">
             </a>
 
+            <a class="navbar-link" id="history-link" href="{{ url_for('main.index') }}">
+                <img src="{{ url_for('static', filename='icons/history.svg') }}" alt="History" class="navbar-icon svg-white">
+            </a>
+
             <a class="navbar-link" id="settings-link" href="{{ url_for('settings.settings') }}">
                 <img src="{{ url_for('static', filename='icons/cog.svg') }}" alt="Settings" class="navbar-icon svg-white">
             </a>

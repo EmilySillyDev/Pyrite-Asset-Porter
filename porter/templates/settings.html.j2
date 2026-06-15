@@ -13,6 +13,9 @@
     <div class="container">
         <h1>Settings</h1>
         <p>Manage your API key, groups, and other settings here.</p>
+    </div>
+
+    <div class="container">
         <h2>API Settings</h2>
 
         <div class="settings">
@@ -20,7 +23,9 @@
             {{- text_input.password_input("API Key", "api-key", "Enter your API key here", default_value=config['USER'].current_api_key or "") -}}
             {{- buttons.contained_button("Save Login", onclick="saveLoginInfo()", classes="group-button" ) -}}
         </div>
+    </div>
 
+    <div class="container">
         <h2>Group Settings</h2>
         <div class="settings">
             {{- listing.group_list(config['USER'].get_groups() or []) -}}
@@ -32,6 +37,21 @@
             {{- text_input.text_input("New Group Name", "new-group-name", "Enter new group name") -}}
             {{- text_input.text_input("New Group ID", "new-group-id", "Enter new group ID") -}}
             {{- buttons.contained_button("Add Group", id="add-group-button", onclick="addGroup()", classes="group-button" ) -}}
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Application Settings</h2>
+        <div class="settings">
+            {% if config['WEBVIEW_WINDOW'] %}
+                {%- if config['WEBVIEW_WINDOW'].on_top -%}
+                    {{- buttons.contained_button("Disable Always On Top", onclick="toggleAlwaysOnTop()") -}}
+                {%- else -%}
+                    {{- buttons.outlined_button("Enable Always On Top", onclick="toggleAlwaysOnTop()") -}}
+                {%- endif -%}
+            {% endif %}
+
+            {{- buttons.contained_button("Open AppData", onclick="openAppData()") -}}
         </div>
     </div>
 
@@ -136,5 +156,51 @@
                 alert('An error occurred while removing the group.');
             });
         }
+
+        function openAppData() {
+            fetch('/settings/open-appdata', {
+                method: 'POST'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    alert('Failed to open AppData folder.');
+                }
+            })
+            .catch(error => {
+                console.error('Error opening AppData folder:', error);
+                alert('An error occurred while trying to open the AppData folder.');
+            });
+        }
+
+        function toggleAlwaysOnTop() {
+            fetch('/settings/toggle-always-on-top', {
+                method: 'POST'
+            })
+            .then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Failed to toggle Always On Top setting.');
+                }
+            })
+            .catch(error => {
+                console.error('Error toggling Always On Top setting:', error);
+                alert('An error occurred while toggling the Always On Top setting.');
+            });
+        }
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function (event) {
+            var scrollpos = sessionStorage.getItem('scrollpos');
+            if (scrollpos) {
+                window.scrollTo(0, scrollpos);
+                sessionStorage.removeItem('scrollpos');
+            }
+        });
+
+        window.addEventListener("beforeunload", function (e) {
+            sessionStorage.setItem('scrollpos', window.scrollY);
+        });
     </script>
 {%- endblock -%}

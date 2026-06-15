@@ -3,7 +3,7 @@ import os
 from appdata import AppDataPaths
 from flask import Flask
 
-from .views import main, settings, assets
+from .views import main, settings, assets, history
 from . import user
 
 current_user = None
@@ -20,6 +20,7 @@ def create_app():
 
     # Register blueprints
     app.register_blueprint(main.bp)
+    app.register_blueprint(history.bp)
     app.register_blueprint(settings.bp)
     app.register_blueprint(assets.bp)
 

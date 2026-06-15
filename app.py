@@ -6,9 +6,9 @@ import threading
 import sys
 
 import porter
+app = porter.create_app()
 
 def start_flask(debug=False):
-    app = porter.create_app()
     app.run(debug=debug, use_reloader=False, port=5000)
 
 def start_webview(debug=False):
@@ -16,7 +16,9 @@ def start_webview(debug=False):
     if debug:
         link += '/debug'
 
-    webview.create_window('Porter', link, width=1280, height=720)
+    window = webview.create_window('Porter', link, width=860, height=840, on_top=True)
+    app.config["WEBVIEW_WINDOW"] = window
+
     webview.start()
 
 def main(headless=False, debug=False, reset=False):

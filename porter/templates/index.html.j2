@@ -1,8 +1,103 @@
 {%- extends "template.html.j2" -%}
 
+{%- import "elements/listing.html.j2" as listing -%}
+{%- import "elements/buttons.html.j2" as buttons -%}
+{%- import "elements/textinput.html.j2" as text_input -%}
+
 {%- block content -%}
     <div class="container">
-        <h1>Welcome to Pyrite Asset Porter</h1>
-        <p>This is the home page of the Pyrite Asset Porter application.</p>
+        <h1>Pyrite Asset Porter</h1>
     </div>
+
+    <div class="container">
+        <h2>Reupload</h2>
+        <div class="settings">
+            {{- text_input.text_input("Asset ID", "asset-id", "1234567890", default_value="") -}}
+            {{- text_input.text_input("Asset Name", "asset-name", "Enter asset name", default_value="") -}}
+            <div class="buttons-horiz group-button">
+                {{- buttons.text_button("Download", id="download-button", onclick="downloadAsset()", classes="" ) -}}
+                {{- buttons.contained_button("Reupload Asset", id="reupload-button", onclick="reuploadAsset()", classes="" ) -}}
+            </div>
+        </div> 
+    </div>
+
+    <div class="container">
+        <h2>Session History</h2>
+        <p>Reuploads from this session, complete history can be found <a href="/history">here</a>.</p>
+        {{- listing.list(["Nobody here but us chickens, try reuploading an asset!"]) -}}
+    </div>
+
+    <script>
+
+
+        function reuploadAsset() {
+            // /assets/reupload-asset/<asset_id>
+            const assetId = document.getElementById('asset-id').value;
+            const assetName = document.getElementById('asset-name').value || null;
+
+            console.log(`Reuploading asset with ID: ${assetId} and name: ${assetName}`);
+
+            if (!assetId) {
+                alert('Please enter a valid Asset ID.');
+                return;
+            }
+
+            fetch(`/assets/reupload-asset/${assetId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name: assetName })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert(`Asset reuploaded successfully with new ID: ${data.new_asset_id}`);
+                    console.log(data);
+                })
+                .catch(error => {
+                    console.error('Error reuploading asset:', error);
+                    alert('Failed to reupload asset. Please check the Asset ID and try again.');
+                });
+        }
+
+        function downloadAsset() {
+            // /assets/download-asset/<asset_id>
+            const assetId = document.getElementById('asset-id').value;
+            const assetName = document.getElementById('asset-name').value || "asset_" + assetId;
+
+            console.log(`Downloading asset with ID: ${assetId} and name: ${assetName}`);
+
+            if (!assetId) {
+                alert('Please enter a valid Asset ID.');
+                return;
+            }
+
+            fetch(`/assets/download-asset/${assetId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = `${assetName}`; // Assuming the asset is a zip file
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch(error => {
+                    console.error('Error downloading asset:', error);
+                    alert('Failed to download asset. Please check the Asset ID and try again.');
+                });
+        }
+    </script>
 {%- endblock -%}

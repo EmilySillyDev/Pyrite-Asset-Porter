@@ -98,3 +98,17 @@ def remove_group():
         return "Group removed successfully", 200
     else:
         return "Missing group ID", 400
+    
+@bp.route('/settings/open-appdata', methods=['POST'])
+def open_appdata():
+    current_app.config['USER'].open_app_data()
+    return "Opened AppData folder", 200
+
+@bp.route('/settings/toggle-always-on-top', methods=['POST'])
+def toggle_always_on_top():
+    window = current_app.config.get('WEBVIEW_WINDOW')
+    if window:
+        window.on_top = not window.on_top
+        return "Toggled always on top", 200
+    else:
+        return "Webview window not found", 400

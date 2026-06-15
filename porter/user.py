@@ -32,7 +32,7 @@ class User:
         self.groups = []
 
         self.load_data()
-    
+
     def get_asset_delivery_info(self, asset_id):
         if not self.is_authenticated():
             raise Exception("User is not authenticated")
@@ -77,15 +77,10 @@ class User:
             if self.user_id is not None:
                 self.user_id = int(self.user_id)
 
-            if (self.current_api_key is not None) and (self.user_id is not None):
-                try:
-                    self.user = RobloxUser(self.user_id, self.current_api_key)
-                except Exception as e:
-                    print(f"Failed to validate API key: {e}")
-                    self.current_api_key = None
+            # if (self.current_api_key is not None) and (self.user_id is not None):
+            self.setup_user()
 
         self.groups = self.load_groups()
-
 
     def get_user_id(self):
         return self.user_id if hasattr(self, 'user_id') else None
@@ -193,8 +188,13 @@ class User:
             except Exception as e:
                 print(f"Failed to validate API key: {e}")
                 self.current_api_key = None
+                self.rblx_api = None
                 self.user = None
 
     def is_authenticated(self):
         return self.user is not None
     
+    def open_app_data(self):
+        path = self.paths.app_data_path
+        if os.path.exists(path):
+            os.startfile(path)

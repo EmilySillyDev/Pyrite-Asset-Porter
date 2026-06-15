@@ -1,5 +1,4 @@
-from flask import Blueprint, render_template, current_app
-
+from flask import Blueprint, render_template, current_app, request
 import requests
 
 bp = Blueprint('assets', __name__)

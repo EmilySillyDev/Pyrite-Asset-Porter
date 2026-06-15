@@ -19,6 +19,8 @@ body {
 .main-content {
     height: calc(100vh - 72px);
     overflow-y: auto;
+    scrollbar-gutter: stable both-edges;
+    /* padding-left: calc(100vw - 100%); */
 }
 
 .container {
@@ -114,6 +116,11 @@ body {
 }
 
 #home-link > img {
+    width: 85%;
+    height: 85%;
+}
+
+#history-link > img {
     width: 85%;
     height: 85%;
 }
@@ -238,4 +245,32 @@ body {
     height: 1px;
     background-color: #ddd;
     margin: 8px 0;
+}
+
+.settings {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    /* background-color: #f5f5f5; */
+    padding: 16px;
+    padding-top: 0;
+    border-radius: 8px;
+
+}
+
+.group-button {
+    align-self: flex-end;
+    max-width: 400px;
+    width: 100%;
+}
+
+.buttons-horiz {
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+}
+
+.buttons-horiz > .contained-button {
+    flex: 1;
 }
