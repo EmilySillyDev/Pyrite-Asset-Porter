@@ -27,3 +27,18 @@
     {%- endif -%}
     </ul>
 {%- endmacro -%}
+
+{%- macro history_list(history_entries) -%}
+    <ul class="list">
+    {%- for entry in history_entries -%}
+        <li class="list-item">
+            <p>{{ entry.name }}</p>
+            <p class="list-item-id">{{ entry.asset_id }} | {{ entry.timestamp | datetimeformat }}</p>
+            <div class="list-item-actions">
+                {{- buttons.small_text_button("View Asset", id="view-asset-" + entry.asset_id|string, onclick="viewAsset(" + entry.asset_id|string + ")") -}}
+                {{- buttons.small_text_button("Copy Asset ID", id="copy-asset-id-" + entry.asset_id|string, onclick="copyAssetId(" + entry.asset_id|string + ")") -}}
+            </div>
+        </li>
+    {%- endfor -%}
+    </ul>
+{%- endmacro -%}

@@ -1,5 +1,7 @@
 import os
 
+from datetime import datetime
+
 from appdata import AppDataPaths
 from flask import Flask
 
@@ -23,5 +25,9 @@ def create_app():
     app.register_blueprint(history.bp)
     app.register_blueprint(settings.bp)
     app.register_blueprint(assets.bp)
+
+    @app.template_filter()
+    def datetimeformat(value, format='%Y-%m-%d %H:%M:%S'):
+        return datetime.fromtimestamp(value).strftime(format)
 
     return app

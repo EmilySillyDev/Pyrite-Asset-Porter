@@ -10,12 +10,25 @@
 import configparser
 import json
 import os
+import time
+
+from dataclasses import dataclass
 
 import requests
 
 from appdata import AppDataPaths
 from rblxopencloud import ApiKey
 from rblxopencloud import User as RobloxUser
+
+@dataclass
+class HistoryEntry:
+    name: str
+    asset_id: int
+    timestamp: float | None = None
+
+    def __post_init__(self):
+        if self.timestamp is None:
+            self.timestamp = time.time()
 
 class User:
     def __init__(self):
@@ -30,6 +43,7 @@ class User:
 
         self.user = None
         self.groups = []
+        self.session_history = []
 
         self.load_data()
 
@@ -190,6 +204,12 @@ class User:
                 self.current_api_key = None
                 self.rblx_api = None
                 self.user = None
+
+    def get_roblox_api(self):
+        if not self.is_authenticated():
+            raise Exception("User is not authenticated")
+        
+        return self.user
 
     def is_authenticated(self):
         return self.user is not None

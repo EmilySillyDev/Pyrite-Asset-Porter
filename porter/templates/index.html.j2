@@ -13,7 +13,7 @@
         <h2>Reupload</h2>
         <div class="settings">
             {{- text_input.text_input("Asset ID", "asset-id", "1234567890", default_value="") -}}
-            {{- text_input.text_input("Asset Name", "asset-name", "Enter asset name", default_value="") -}}
+            {{- text_input.text_input("Asset Name", "asset-name", "Defaults to original name", default_value="") -}}
             <div class="buttons-horiz group-button">
                 {{- buttons.text_button("Download", id="download-button", onclick="downloadAsset()", classes="" ) -}}
                 {{- buttons.contained_button("Reupload Asset", id="reupload-button", onclick="reuploadAsset()", classes="" ) -}}
@@ -24,11 +24,22 @@
     <div class="container">
         <h2>Session History</h2>
         <p>Reuploads from this session, complete history can be found <a href="/history">here</a>.</p>
-        {{- listing.list(["Nobody here but us chickens, try reuploading an asset!"]) -}}
+        {% if config["USER"].session_history %}
+            {{- listing.history_list(config["USER"].session_history) -}}
+        {% else %}
+            {{- listing.list(["Nobody here but us chickens, try reuploading an asset!"]) -}}
+        {% endif %}
     </div>
 
     <script>
 
+        function viewAsset(assetId) {
+            window.open(`https://www.roblox.com/library/${assetId}`, '_blank');
+        }
+
+        function copyAssetId(assetId) {
+            navigator.clipboard.writeText(assetId);
+        }
 
         function reuploadAsset() {
             // /assets/reupload-asset/<asset_id>
@@ -56,8 +67,8 @@
                     return response.json();
                 })
                 .then(data => {
-                    alert(`Asset reuploaded successfully with new ID: ${data.new_asset_id}`);
                     console.log(data);
+                    location.reload();
                 })
                 .catch(error => {
                     console.error('Error reuploading asset:', error);
